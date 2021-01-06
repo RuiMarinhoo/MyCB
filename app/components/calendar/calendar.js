@@ -167,25 +167,6 @@ class MyCalendar extends React.Component {
     }
 
     setCalendarData(){
-        // if (this.state.activeDate.getMonth() === 11) {
-        //     this.state.data = [
-        //         {month: this.state.activeDate.getMonth() - 1, year: this.state.activeDate.getFullYear()},
-        //         {month: this.state.activeDate.getMonth(), year: this.state.activeDate.getFullYear()},
-        //         {month: 0, year: this.state.activeDate.getFullYear() + 1},
-        //         ]
-        // } else if (this.state.activeDate.getMonth() === 0) {
-        //     this.state.data = [
-        //         {month: 11, year: this.state.activeDate.getFullYear() - 1},
-        //         {month: this.state.activeDate.getMonth(), year: this.state.activeDate.getFullYear()},
-        //         {month: this.state.activeDate.getMonth() + 1, year: this.state.activeDate.getFullYear()},
-        //     ]
-        // } else {
-        //     this.state.data = [
-        //         {month: this.state.activeDate.getMonth() - 1, year: this.state.activeDate.getFullYear()},
-        //         {month: this.state.activeDate.getMonth(), year: this.state.activeDate.getFullYear()},
-        //         {month: this.state.activeDate.getMonth() + 1, year: this.state.activeDate.getFullYear()},
-        //     ]
-        // }
         this.monthsToPage.forEach(value => {
             const toAdd = {month: value, year: this.state.activeDate.getFullYear()}
             this.state.data.push(toAdd);
@@ -197,173 +178,30 @@ class MyCalendar extends React.Component {
     scrollToInitialPosition = () => {
         this.scrollViewRef.scrollTo({ x: Dimensions.get('window').width, animated: false });
     }
-    makeRequest = (e) => {
-        const lastPos = Math.round(Dimensions.get('window').width);
-        const newPos = Math.round(e.nativeEvent.contentOffset.x);
-        console.log(lastPos + ' - ' + newPos);
-        // if (now.getMonth() == 11) {
-        //     var current = new Date(now.getFullYear() + 1, 0, 1);
-        // } else {
-        //     var current = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-        // }
-        if(lastPos !== newPos){
-            if(lastPos < newPos){
-                this.state.activeDate.setMonth(
-                    this.state.activeDate.getMonth() + 1
-                )
-                this.state.data.splice(0, 1);
-                let toAdd;
-                if (this.state.activeDate.getMonth() === 11) {
-                    toAdd = {month: 0, year: this.state.activeDate.getFullYear() + 1}
-                } else {
-                    toAdd = {month: this.state.activeDate.getMonth() + 1, year: this.state.activeDate.getFullYear()}
-                }
-                this.state.data.push(toAdd);
-            }
-            else{
-                this.state.activeDate.setMonth(
-                    this.state.activeDate.getMonth() - 1
-                )
-                this.state.data.splice((this.state.data.length - 1), 1);
-                let toAdd;
-                if (this.state.activeDate.getMonth() === 0) {
-                    toAdd = {month: 11, year: this.state.activeDate.getFullYear() - 1}
-                } else {
-                    toAdd = {month: this.state.activeDate.getMonth() - 1, year: this.state.activeDate.getFullYear()}
-                }
-                this.state.data.unshift(toAdd);
-            }
-        }
-        console.log(this.state.activeDate);
-        console.log(this.state.data);
-        this.scrollViewRef.scrollTo({ x: Dimensions.get('window').width, animated: false });
-        this.forceUpdate();
-        // this.setState({
-        //     data: [(this.state.activeDate.getMonth()-1), this.state.activeDate.getMonth(), (this.state.activeDate.getMonth()+1)],
-        //     refreshing: false
-        // })
-    }
-
-    isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
-        const lastPos = Math.round(Dimensions.get('window').width);
-        const newPos = Math.round(contentOffset.x);
-        console.log(lastPos + ' - ' + newPos + ' - ' + this.width);
-
-        if(lastPos !== newPos){
-            if(lastPos < newPos){
-                this.state.activeDate.setMonth(
-                    this.state.activeDate.getMonth() + 1
-                )
-            }
-            else{
-                this.state.activeDate.setMonth(
-                    this.state.activeDate.getMonth() - 1
-                )
-            }
-        }
-        console.log(this.state.activeDate);
-        console.log(this.state.data);
-
-
-        const paddingToBottom = Math.round(Dimensions.get('window').width);
-        if(layoutMeasurement.width + contentOffset.x >= contentSize.width - paddingToBottom){
-
-
-            this.monthsToPage.forEach(value => {
-                const toAdd = {month: value, year: this.state.activeDate.getFullYear() + 1}
-                this.state.data.push(toAdd);
-            })
-        }
-        console.log(this.state.data);
-    };
-
-    handleSize = (width, height) => {
-        if (this.scroll) {
-            const position = this.scroll + width - this.width
-            this.scrollViewRef.scrollTo({x: position, animated: false})
-        }
-        this.width = width;
-    }
 
 
 
     lastPos = 0
-    changeData = (e) => {
-        console.log(this.state)
-        const newPos = Math.round(e.nativeEvent.contentOffset.x);
-        console.log(this.lastPos + ' - ' + newPos);
-        if(this.lastPos !== newPos){
-            if(this.lastPos < newPos){
-                this.setState(() => {
-                    this.state.activeDate.setMonth(
-                        this.state.activeDate.getMonth() + 1
-                    )
-                    return this.state;
-                });
-            }
-            else{
-                this.setState(() => {
-                    this.state.activeDate.setMonth(
-                        this.state.activeDate.getMonth() - 1
-                    )
-                    return this.state;
-                });
-            }
-        }
-        this.lastPos = newPos;
-        // console.log(this.state.activeDate);
-    }
-
-    onEndReached = (e) => {
-        const newPos = Math.round(e.nativeEvent.contentOffset.x);
-        let newYear;
-        if (this.lastPos < newPos) {
-            newYear = this.state.activeDate.getFullYear() + 1;
-            if(!(this.state.data.some(el => el.year === newYear))){
-                this.monthsToPage.forEach(value => {
-                    const toAdd = {month: value, year: newYear}
-                    this.state.data.push(toAdd)
-                })
-            }
-        }
-        else{
-            newYear = this.state.activeDate.getFullYear() - 1;
-            if(!(this.state.data.some(el => el.year === newYear))){
-                this.monthsToPage.reverse().forEach(value => {
-                    const toAdd = {month: value, year: newYear}
-                    this.state.data.unshift(toAdd)
-                })
-            }
-        }
-
-        // this.setState({data: [...this.state.data, data]});
-        console.log(this.state.data);
-    }
-
     onScroll = (e) => {
 
-        console.log(this.state)
-        // const newPos = Math.round(e.nativeEvent.contentOffset.x);
-        // console.log(this.lastPos + ' - ' + newPos);
-        // if(this.lastPos !== newPos){
-        //     if(this.lastPos < newPos){
-        //         this.setState(() => {
-        //             this.state.activeDate.setMonth(
-        //                 this.state.activeDate.getMonth() + 1
-        //             )
-        //             return this.state;
-        //         });
-        //     }
-        //     else{
-        //         this.setState(() => {
-        //             this.state.activeDate.setMonth(
-        //                 this.state.activeDate.getMonth() - 1
-        //             )
-        //             return this.state;
-        //         });
-        //     }
-        // }
-        // this.lastPos = newPos;
+        console.log(this.state.data)
+        let contentOffset = e.nativeEvent.contentOffset;
+        let viewSize = e.nativeEvent.layoutMeasurement;
+
+        // Divide the horizontal offset by the width of the view to see which page is visible
+        let pageNum = Math.floor(contentOffset.x / viewSize.width);
+
+        console.log(this.state.data[pageNum].month + ' - ' + this.state.data[pageNum].year);
+        this.setState(() => {
+            this.state.activeDate.setMonth(
+                this.state.data[pageNum].month
+            )
+            this.state.activeDate.setFullYear(
+                this.state.data[pageNum].year
+            )
+            return this.state;
+        });
+
 
         let newYear;
         if (this.state.activeDate.getMonth() === 0) {
@@ -410,6 +248,15 @@ class MyCalendar extends React.Component {
 
             </View>
         )
+    }
+
+    changeMonth = (n) => {
+        this.setState(() => {
+            this.state.activeDate.setMonth(
+                this.state.activeDate.getMonth() + n
+            )
+            return this.state;
+        });
     }
 
 
@@ -529,7 +376,7 @@ class MyCalendar extends React.Component {
                             {this.months[this.state.activeDate.getMonth()]} &nbsp;
                             {this.state.activeDate.getFullYear()}
                         </Text>
-                        {/*<FontAwesomeIcon icon="chevron-right" onPress={() => this.changeMonth(+1)}/>*/}
+                        <FontAwesomeIcon icon="chevron-right" onPress={() => this.changeMonth(+1)}/>
                     </View>
                     <Text>teste</Text>
                 </View>
@@ -558,7 +405,7 @@ class MyCalendar extends React.Component {
                         {this.months[this.state.activeDate.getMonth()]} &nbsp;
                         {this.state.activeDate.getFullYear()}
                     </Text>
-                    {/*<FontAwesomeIcon icon="chevron-right" onPress={() => this.changeMonth(+1)}/>*/}
+                    <FontAwesomeIcon icon="chevron-right" onPress={() => this.changeMonth(+1)}/>
                 </View>
 
                 {/*<this.CountDown/>*/}
@@ -566,37 +413,6 @@ class MyCalendar extends React.Component {
 
                 <Text>You clicked {this.state.count} times</Text>
                 <Button title="Change Text" onPress={ () => this.setState({ count: this.state.count + 1 })} />
-
-                {/*<ScrollView*/}
-                {/*    horizontal={true}*/}
-                {/*    showsHorizontalScrollIndicator={false}*/}
-                {/*    pagingEnabled={true}*/}
-                {/*    ref={(ref) => { this.scrollViewRef = ref; }}*/}
-                {/*    onLayout={this.scrollToInitialPosition}*/}
-                {/*    // onMomentumScrollEnd={this.makeRequest}*/}
-                {/*    onMomentumScrollEnd={({nativeEvent}) => this.isCloseToBottom(nativeEvent)}*/}
-                {/*    onContentSizeChange={this.handleSize}*/}
-                {/*    scrollEventThrottle={400}*/}
-                {/*    // onScroll={({nativeEvent}) => {*/}
-                {/*    //     console.log(isCloseToBottom(nativeEvent));*/}
-                {/*    //     if (isCloseToBottom(nativeEvent)) {*/}
-                {/*    //         // enableSomeButton();*/}
-                {/*    //     }*/}
-                {/*    // }}*/}
-                {/*    // scrollEventThrottle={400}*/}
-                {/*>*/}
-                {/*    {this.state.data.map( (data, monthIndex) => {*/}
-                {/*        return (*/}
-                {/*            <View*/}
-                {/*                key={data.month+'-'+data.year}*/}
-                {/*                style={{*/}
-                {/*                    width: width*/}
-                {/*                }}>*/}
-                {/*                { months(data.month) }*/}
-                {/*            </View>*/}
-                {/*        )*/}
-                {/*    })}*/}
-                {/*</ScrollView>*/}
 
                 <Text>{this.state.activeDate.getMonth()}</Text>
 
